@@ -11,7 +11,8 @@
 
 ## 📸 Preview
 
-*(Add a screenshot of the application here)*
+<img width="1902" height="1033" alt="image" src="https://github.com/user-attachments/assets/6052a134-d714-4cd4-b4dc-9f1caa8ffb80" />
+
 
 ---
 
