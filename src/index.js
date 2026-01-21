@@ -1,3 +1,11 @@
+/**
+ * Mind Chill - Application Entry Point
+ *
+ * @author Sijan Pradhan
+ * @description Boostraps the React application and renders the root component.
+ * @version 1.0.0
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';

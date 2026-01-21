@@ -1,3 +1,11 @@
+/**
+ * Mind Chill - Main Application Component
+ *
+ * @author Sijan Pradhan
+ * @description Orchestrates the main layout, state management for popups, and core feature integration.
+ * @version 1.0.0
+ */
+
 import React, { useState } from 'react';
 import './App.css';
 import MusicPlayer from './components/MusicPlayer/MusicPlayer';
