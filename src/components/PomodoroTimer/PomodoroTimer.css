@@ -1,0 +1,223 @@
+/* ========================================
+   Pomodoro Timer Styles
+   ======================================== */
+
+.pomodoro-timer {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+}
+
+/* Header */
+.timer-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.timer-header h2 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.session-count {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    background: var(--color-bg-tertiary);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-full);
+}
+
+.session-icon {
+    font-size: var(--text-base);
+}
+
+/* Mode Tabs */
+.mode-tabs {
+    display: flex;
+    gap: var(--space-2);
+    background: var(--color-bg-tertiary);
+    padding: var(--space-1);
+    border-radius: var(--radius-full);
+}
+
+.mode-tab {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+}
+
+.mode-tab:hover {
+    color: var(--color-text-secondary);
+}
+
+.mode-tab.active {
+    background: var(--color-accent-primary);
+    color: white;
+}
+
+/* Timer Display */
+.timer-display {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.progress-ring-progress {
+    filter: drop-shadow(0 0 8px currentColor);
+}
+
+.timer-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    z-index: 1;
+}
+
+.time {
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--color-text-primary);
+    letter-spacing: 0.05em;
+}
+
+.mode-label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* Controls */
+.timer-controls {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    transition: all var(--transition-base);
+}
+
+.control-btn.primary {
+    background: var(--color-accent-primary);
+    color: white;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+}
+
+.control-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+}
+
+.control-btn.primary.pause {
+    background: #f59e0b;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+}
+
+.control-btn.secondary {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--glass-border);
+}
+
+.control-btn.secondary:hover {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    border-color: var(--color-accent-primary);
+}
+
+/* Progress Dots */
+.progress-dots {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-bg-tertiary);
+    border: 2px solid var(--glass-border);
+    transition: all var(--transition-base);
+}
+
+.dot.completed {
+    background: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 10px var(--color-accent-glow);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .pomodoro-timer {
+        padding: var(--space-4);
+    }
+
+    .timer-header {
+        flex-direction: column;
+        gap: var(--space-3);
+        text-align: center;
+    }
+
+    .mode-tabs {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .timer-display {
+        width: 180px;
+        height: 180px;
+    }
+
+    .progress-ring {
+        width: 180px;
+        height: 180px;
+    }
+
+    .progress-ring circle {
+        cx: 90;
+        cy: 90;
+        r: 70;
+    }
+
+    .time {
+        font-size: var(--text-3xl);
+    }
+
+    .timer-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .control-btn {
+        justify-content: center;
+    }
+}

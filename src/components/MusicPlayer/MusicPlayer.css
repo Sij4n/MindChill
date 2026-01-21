@@ -1,0 +1,504 @@
+/* ========================================
+   Music Player - Fullscreen Styles
+   ======================================== */
+
+/* Fullscreen Container */
+.music-player-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+}
+
+/* ========================================
+   Fullscreen Backdrop
+   ======================================== */
+.fullscreen-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: background-image 0.5s ease;
+}
+
+.backdrop-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(26, 21, 37, 0.4);
+    pointer-events: none;
+}
+
+/* ========================================
+   YouTube Container (Hidden)
+   ======================================== */
+.youtube-container {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.youtube-container iframe {
+    width: 100%;
+    height: 100%;
+}
+
+/* ========================================
+   Settings Toggle
+   ======================================== */
+.settings-toggle {
+    position: fixed;
+    top: 80px;
+    right: var(--space-6);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    backdrop-filter: none;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--text-lg);
+    color: #ffffff !important;
+    z-index: 999;
+    transition: all var(--transition-base);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.settings-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--color-accent-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px var(--color-accent-glow);
+}
+
+/* ========================================
+   Settings Panel
+   ======================================== */
+.settings-panel {
+    position: fixed;
+    top: 130px;
+    right: var(--space-6);
+    padding: var(--space-5);
+    min-width: 300px;
+    max-width: 350px;
+    z-index: var(--z-controls);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.settings-section {
+    margin-bottom: var(--space-5);
+}
+
+.settings-section:last-child {
+    margin-bottom: 0;
+}
+
+.settings-section h3 {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-3);
+}
+
+.backdrop-hint {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin-top: var(--space-3);
+    font-style: italic;
+}
+
+/* Stream Options */
+.stream-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.stream-btn {
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-bg-tertiary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    transition: all var(--transition-fast);
+}
+
+.stream-btn:hover {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+}
+
+.stream-btn.active {
+    background: var(--color-accent-primary);
+    color: var(--color-bg-primary);
+    border-color: var(--color-accent-primary);
+}
+
+/* Backdrop Options */
+.backdrop-options {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.backdrop-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-md);
+    background-size: cover;
+    background-position: center;
+    border: 2px solid transparent;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.backdrop-btn:hover {
+    border-color: var(--color-accent-secondary);
+    transform: scale(1.05);
+}
+
+.backdrop-btn.active {
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 10px var(--color-accent-glow);
+}
+
+.backdrop-btn .check {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-accent-primary);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xs);
+    color: var(--color-bg-primary);
+}
+
+/* ========================================
+   Bottom Controls Bar
+   ======================================== */
+.bottom-controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    padding: var(--space-4) var(--space-8);
+    background: transparent;
+    z-index: 999;
+    justify-content: flex-start;
+    gap: var(--space-4);
+    pointer-events: auto;
+}
+
+/* Player Controls */
+/* Player Controls */
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-shrink: 0;
+}
+
+.control-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0;
+    color: #ffffff !important;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+}
+
+.control-btn svg {
+    width: 28px;
+    height: 28px;
+    fill: #ffffff;
+    stroke: none;
+    /* Default for filled icons */
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
+}
+
+/* Pink Volume Button */
+.control-btn.volume-btn svg {
+    fill: #e8a0b4 !important;
+}
+
+.control-btn.shuffle-btn svg {
+    fill: none;
+    stroke: #ffffff;
+}
+
+.control-btn:hover {
+    transform: scale(1.1);
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+}
+
+
+
+.play-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Volume Control */
+/* (Old styles removed) */
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.volume-slider {
+    width: 140px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.9);
+    /* High visibility */
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    margin-left: 8px;
+    outline: none;
+}
+
+.volume-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    background: transparent;
+    border-radius: 999px;
+    border: none;
+}
+
+.volume-slider::-moz-range-track {
+    width: 100%;
+    height: 6px;
+    background: transparent;
+    border-radius: 999px;
+    border: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #ffffff;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -5px;
+    /* (thumbHeight - trackHeight) / 2 = (16 - 6) / 2 = 5 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s ease;
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #ffffff;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s ease;
+}
+
+.volume-slider:hover::-webkit-slider-thumb {
+    transform: scale(1.1);
+}
+
+.volume-slider:hover::-moz-range-thumb {
+    transform: scale(1.1);
+}
+
+
+/* Stream Selector */
+.stream-selector {
+    position: relative;
+}
+
+.stream-dropdown {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 200px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2);
+    margin-bottom: var(--space-2);
+    animation: fadeIn 0.2s ease;
+}
+
+.stream-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding: var(--space-3);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: left;
+}
+
+.stream-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.stream-option.active {
+    background: var(--color-accent-primary);
+}
+
+.stream-option.active .stream-name,
+.stream-option.active .stream-desc {
+    color: var(--color-bg-primary);
+}
+
+.stream-name {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.stream-desc {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+/* ========================================
+   Scrolling Music Ticker
+   ======================================== */
+.music-ticker {
+    flex: 0 1 auto;
+    width: auto;
+    min-width: 0;
+    max-width: 400px;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+    background: rgba(13, 11, 18, 0.85);
+    border-radius: 25px;
+    padding: 8px 24px;
+    display: flex;
+    align-items: center;
+    max-height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ticker-content {
+    display: inline-flex;
+    animation: scroll 30s linear infinite;
+}
+
+.ticker-text {
+    white-space: nowrap;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    padding-right: var(--space-8);
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+@media (max-width: 768px) {
+    .settings-panel {
+        right: var(--space-4);
+        left: var(--space-4);
+        min-width: auto;
+        max-width: none;
+    }
+
+    .bottom-controls {
+        padding: var(--space-3) var(--space-4);
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .player-controls {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .music-ticker {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-toggle {
+        top: 70px;
+        right: var(--space-4);
+    }
+
+    .volume-slider {
+        width: 60px;
+    }
+}
+
+/* Animation keyframe for fadeIn */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

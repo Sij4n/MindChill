@@ -1,0 +1,404 @@
+/* ========================================
+   Video Call Modal Styles
+   ======================================== */
+
+.video-call-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+    padding: var(--space-4);
+    animation: fadeIn 0.3s ease;
+}
+
+.video-call-modal {
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.close-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-full);
+    color: var(--color-text-secondary);
+    font-size: var(--text-lg);
+    transition: all var(--transition-fast);
+}
+
+.close-btn:hover {
+    background: var(--color-danger);
+    color: white;
+}
+
+/* Connection Status */
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-full);
+    align-self: center;
+    font-size: var(--text-sm);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-text-muted);
+}
+
+.connection-status.initializing .status-dot,
+.connection-status.calling .status-dot {
+    background: var(--color-warning);
+    animation: pulse 1s infinite;
+}
+
+.connection-status.ready .status-dot {
+    background: var(--color-accent-primary);
+}
+
+.connection-status.connected .status-dot {
+    background: var(--color-success);
+}
+
+.connection-status.error .status-dot {
+    background: var(--color-danger);
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Video Container */
+.video-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.remote-video-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.remote-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    color: var(--color-text-muted);
+    background: var(--color-bg-secondary);
+}
+
+.placeholder-icon {
+    font-size: 48px;
+    animation: wave 1.5s ease-in-out infinite;
+}
+
+@keyframes wave {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(20deg);
+    }
+
+    75% {
+        transform: rotate(-20deg);
+    }
+}
+
+/* Local Video PIP */
+.local-video-wrapper {
+    position: absolute;
+    bottom: var(--space-4);
+    right: var(--space-4);
+    width: 120px;
+    aspect-ratio: 4 / 3;
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 2px solid var(--glass-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.local-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+}
+
+.local-video-wrapper.video-off .local-video {
+    opacity: 0;
+}
+
+.video-off-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-primary);
+    font-size: 24px;
+}
+
+/* Connection Panel */
+.connection-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.room-id-section,
+.join-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.room-id-section label,
+.join-section label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+.room-id-display {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.room-id {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-secondary);
+}
+
+.copy-btn {
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-accent-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+}
+
+.copy-btn:hover:not(:disabled) {
+    background: var(--color-accent-secondary);
+}
+
+.copy-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.room-hint {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+/* Join Input */
+.join-input-group {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.room-input {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-primary);
+    transition: all var(--transition-fast);
+}
+
+.room-input::placeholder {
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--color-text-muted);
+}
+
+.room-input:focus {
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 3px var(--color-accent-glow);
+}
+
+.join-btn {
+    padding: var(--space-3) var(--space-5);
+    background: var(--color-success);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+}
+
+.join-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.join-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Video Controls */
+.video-controls {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
+}
+
+.video-controls .control-btn {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    font-size: 20px;
+    transition: all var(--transition-fast);
+}
+
+.video-controls .control-btn:hover {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-accent-primary);
+}
+
+.video-controls .control-btn.off {
+    background: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+.video-controls .control-btn.end-call {
+    background: var(--color-danger);
+    border-color: var(--color-danger);
+    transform: rotate(135deg);
+}
+
+.video-controls .control-btn.end-call:hover {
+    background: #dc2626;
+}
+
+/* Privacy Notice */
+.privacy-notice {
+    text-align: center;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .video-call-modal {
+        padding: var(--space-4);
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .local-video-wrapper {
+        width: 80px;
+        bottom: var(--space-2);
+        right: var(--space-2);
+    }
+
+    .room-id-display {
+        flex-direction: column;
+    }
+
+    .join-input-group {
+        flex-direction: column;
+    }
+}
