@@ -12,7 +12,6 @@ function PomodoroTimer() {
     const [timeLeft, setTimeLeft] = useState(TIMER_MODES.WORK.duration);
     const [isRunning, setIsRunning] = useState(false);
     const [sessions, setSessions] = useState(0);
-    const audioRef = useRef(null);
     const intervalRef = useRef(null);
 
     const currentMode = TIMER_MODES[mode];
