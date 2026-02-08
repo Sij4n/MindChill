@@ -16,6 +16,10 @@
 
 /* Design Tokens */
 :root {
+  /* Layout tokens */
+  --container-max-width: 1200px;
+  --container-padding: 1rem;
+
   /* Colors - Minimal Theme */
   --color-bg-primary: #000000;
   --color-bg-secondary: #0a0a0a;
