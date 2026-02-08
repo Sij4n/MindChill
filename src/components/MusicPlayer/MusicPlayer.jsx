@@ -183,7 +183,7 @@ function MusicPlayer() {
     };
 
     return (
-        <div className="music-player-fullscreen">
+        <div className="music-player-fullscreen" role="region" aria-label="Music player — background and controls">
             {/* Clickable Backdrop GIF */}
             <div
                 className="fullscreen-backdrop"
