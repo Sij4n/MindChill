@@ -19,7 +19,7 @@
 ## ✨ Features
 
 - **🎧 Curated Lofi Streams**: Seamlessly switch between high-quality lofi stations with custom backdrops.
-- **⏱️ Pomodoro Timer**: specific focus intervals with a built-in timer to boost productivity.
+- **⏱️ Pomodoro Timer**: provides specific focus intervals with a built-in timer to boost productivity.
 - **📝 Integrated Todo List**: Persist tasks locally and track your daily progress.
 - **📹 Study With Me**: Peer-to-peer video calling capability for remote study sessions (powered by PeerJS).
 - **🎨 Monochrome Theme**: A clean, distraction-free aesthetic using a strict black/white/gray palette.
