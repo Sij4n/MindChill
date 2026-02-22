@@ -20,6 +20,42 @@ function VideoCall({ isOpen, onClose }) {
     const localStreamRef = useRef(null);
     const callRef = useRef(null);
 
+    // Helper to request media permissions
+    const requestMediaPermissions = useCallback(async () => {
+        try {
+            console.log('Requesting camera/mic permissions...');
+            setConnectionStatus('initializing');
+
+            // Try to get both first
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true
+            });
+
+            console.log('Media stream obtained successfully');
+            localStreamRef.current = stream;
+            setLocalStream(stream);
+            setMediaError(null);
+            setConnectionStatus('ready');
+        } catch (mediaErr) {
+            console.error('Media permission denied or failed:', mediaErr);
+
+            let errorMessage = 'Media Error';
+            if (mediaErr.name === 'NotAllowedError' || mediaErr.name === 'PermissionDeniedError') {
+                errorMessage = 'Blocked: Check address bar icon 🛡️';
+            } else if (mediaErr.name === 'NotFoundError' || mediaErr.name === 'DevicesNotFoundError') {
+                errorMessage = 'No Camera/Mic Found';
+            } else if (mediaErr.name === 'NotReadableError' || mediaErr.name === 'TrackStartError') {
+                errorMessage = 'Camera busy: Close other apps';
+            } else {
+                errorMessage = 'Unable to start camera';
+            }
+
+            setMediaError(errorMessage);
+            setConnectionStatus('error');
+        }
+    }, []);
+
     // Initialize peer connection
     const initializePeer = useCallback(async () => {
         try {
@@ -86,43 +122,7 @@ function VideoCall({ isOpen, onClose }) {
             console.error('Failed to initialize VideoCall component:', err);
             setConnectionStatus('error');
         }
-    }, [requestMediaPermissions]);
-
-    // Helper to request media permissions
-    const requestMediaPermissions = useCallback(async () => {
-        try {
-            console.log('Requesting camera/mic permissions...');
-            setConnectionStatus('initializing');
-
-            // Try to get both first
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: true
-            });
-
-            console.log('Media stream obtained successfully');
-            localStreamRef.current = stream;
-            setLocalStream(stream);
-            setMediaError(null);
-            setConnectionStatus('ready');
-        } catch (mediaErr) {
-            console.error('Media permission denied or failed:', mediaErr);
-
-            let errorMessage = 'Media Error';
-            if (mediaErr.name === 'NotAllowedError' || mediaErr.name === 'PermissionDeniedError') {
-                errorMessage = 'Blocked: Check address bar icon 🛡️';
-            } else if (mediaErr.name === 'NotFoundError' || mediaErr.name === 'DevicesNotFoundError') {
-                errorMessage = 'No Camera/Mic Found';
-            } else if (mediaErr.name === 'NotReadableError' || mediaErr.name === 'TrackStartError') {
-                errorMessage = 'Camera busy: Close other apps';
-            } else {
-                errorMessage = 'Unable to start camera';
-            }
-
-            setMediaError(errorMessage);
-            setConnectionStatus('error');
-        }
-    }, []);
+    }, [requestMediaPermissions, localStream]);
 
     // Sync video elements with streams
     useEffect(() => {

@@ -130,30 +130,6 @@ function MusicPlayer({ autoPlay }) {
         }
     }, [isPlaying, autoPlay]);
 
-    // Keyboard shortcuts for MusicPlayer
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            // Don't trigger if user is typing in an input
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
-                return;
-            }
-
-            const key = e.key.toLowerCase();
-            if (e.code === 'Space') {
-                e.preventDefault(); // Prevent page scroll
-                togglePlay();
-            } else if (key === 'm') {
-                toggleMute();
-            } else if (key === 'g') {
-                handleBackdropClick();
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [togglePlay, toggleMute, handleBackdropClick]); // Dependencies for methods/state used in listener
-
-
     // Click on backdrop to cycle through GIFs
     const handleBackdropClick = useCallback(() => {
         setCurrentBackdropIndex((prev) => (prev + 1) % BACKDROP_GIFS.length);
@@ -186,6 +162,29 @@ function MusicPlayer({ autoPlay }) {
         setCurrentStreamIndex(index);
         setIsPlaying(true);
     }, []);
+
+    // Keyboard shortcuts for MusicPlayer
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            // Don't trigger if user is typing in an input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
+                return;
+            }
+
+            const key = e.key.toLowerCase();
+            if (e.code === 'Space') {
+                e.preventDefault(); // Prevent page scroll
+                togglePlay();
+            } else if (key === 'm') {
+                toggleMute();
+            } else if (key === 'g') {
+                handleBackdropClick();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [togglePlay, toggleMute, handleBackdropClick]); // Dependencies for methods/state used in listener
 
 
 
