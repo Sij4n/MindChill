@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import YouTube from 'react-youtube';
 import './MusicPlayer.css';
 
@@ -151,16 +151,16 @@ function MusicPlayer({ autoPlay }) {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isPlaying, isMuted, currentBackdropIndex]); // Dependencies for methods/state used in listener
+    }, [togglePlay, toggleMute, handleBackdropClick]); // Dependencies for methods/state used in listener
 
 
     // Click on backdrop to cycle through GIFs
-    const handleBackdropClick = () => {
+    const handleBackdropClick = useCallback(() => {
         setCurrentBackdropIndex((prev) => (prev + 1) % BACKDROP_GIFS.length);
-    };
+    }, []);
 
     // Shuffle to random stream
-    const handleShuffle = () => {
+    const handleShuffle = useCallback(() => {
         let newIndex;
         do {
             newIndex = Math.floor(Math.random() * MUSIC_STREAMS.length);
@@ -169,26 +169,25 @@ function MusicPlayer({ autoPlay }) {
         // Resetting the stream causes component re-render. 
         // react-youtube handles videoId prop change automatically.
         setIsPlaying(true);
-    };
+    }, [currentStreamIndex]);
 
     // Toggle mute
-    const toggleMute = () => {
+    const toggleMute = useCallback(() => {
         setIsMuted(!isMuted);
-    };
+    }, [isMuted]);
 
     // Toggle play/pause
-    const togglePlay = () => {
+    const togglePlay = useCallback(() => {
         setIsPlaying(!isPlaying);
-    };
+    }, [isPlaying]);
 
     // Handle stream change from settings
-    const handleStreamChange = (index) => {
+    const handleStreamChange = useCallback((index) => {
         setCurrentStreamIndex(index);
         setIsPlaying(true);
-    };
+    }, []);
 
-    // Generate ticker text
-    const tickerText = MUSIC_STREAMS.map(s => `${s.name} - ${s.description} 📡`).join('  •  ');
+
 
     // YouTube Options
     const opts = {

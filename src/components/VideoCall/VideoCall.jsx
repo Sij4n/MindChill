@@ -86,7 +86,7 @@ function VideoCall({ isOpen, onClose }) {
             console.error('Failed to initialize VideoCall component:', err);
             setConnectionStatus('error');
         }
-    }, []);
+    }, [requestMediaPermissions]);
 
     // Helper to request media permissions
     const requestMediaPermissions = useCallback(async () => {
@@ -198,15 +198,7 @@ function VideoCall({ isOpen, onClose }) {
         }
     }, [localStream]);
 
-    // End call
-    const endCall = useCallback(() => {
-        if (callRef.current) {
-            callRef.current.close();
-        }
-        setIsConnected(false);
-        setConnectionStatus('ready');
-        setRemotePeerId('');
-    }, []);
+
 
     // Copy room ID
     const copyRoomId = useCallback(() => {
