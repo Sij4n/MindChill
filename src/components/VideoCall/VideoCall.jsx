@@ -20,6 +20,26 @@ function VideoCall({ isOpen, onClose }) {
     const localStreamRef = useRef(null);
     const callRef = useRef(null);
 
+    // Helper for handling call streams
+    const handleCallStream = useCallback((call) => {
+        call.on('stream', (remoteStream) => {
+            console.log('Remote stream received');
+            if (remoteVideoRef.current) {
+                remoteVideoRef.current.srcObject = remoteStream;
+            }
+            setIsConnected(true);
+            setConnectionStatus('connected');
+        });
+
+        call.on('close', () => {
+            console.log('Call closed');
+            setIsConnected(false);
+            setConnectionStatus('ready');
+        });
+
+        callRef.current = call;
+    }, []);
+
     // Helper to request media permissions
     const requestMediaPermissions = useCallback(async () => {
         try {
@@ -64,8 +84,16 @@ function VideoCall({ isOpen, onClose }) {
             // 1. First, create the Peer connection (don't wait for camera yet)
             const roomId = uuidv4().slice(0, 8).toUpperCase();
             console.log('Creating peer with ID:', roomId);
+            
+            // Configure PeerJS with better options
             const peer = new Peer(roomId, {
-                debug: 2 // Log errors and warnings
+                debug: 2,
+                config: {
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' }
+                    ]
+                }
             });
 
             peer.on('open', (id) => {
@@ -78,10 +106,12 @@ function VideoCall({ isOpen, onClose }) {
                 console.log('Incoming call received');
                 setConnectionStatus('incoming');
 
-                // If we don't have a stream yet, we'll try to get it now
-                if (!localStream) {
+                // Use ref instead of state to avoid dependency issues
+                const currentStream = localStreamRef.current;
+                if (!currentStream) {
                     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                         .then(stream => {
+                            localStreamRef.current = stream;
                             setLocalStream(stream);
                             call.answer(stream);
                             handleCallStream(call);
@@ -91,7 +121,7 @@ function VideoCall({ isOpen, onClose }) {
                             setConnectionStatus('error');
                         });
                 } else {
-                    call.answer(localStream);
+                    call.answer(currentStream);
                     handleCallStream(call);
                 }
             });
@@ -99,17 +129,56 @@ function VideoCall({ isOpen, onClose }) {
             peer.on('error', (err) => {
                 console.error('Peer error type:', err.type);
                 console.error('Peer error details:', err);
-                setConnectionStatus('error');
-
-                // If ID is taken, try again with no ID (auto-generated)
+                
+                // Handle different error types
                 if (err.type === 'unavailable-id') {
                     console.log('ID taken, retrying with auto-generated ID...');
-                    const fallbackPeer = new Peer();
+                    const fallbackPeer = new Peer({
+                        debug: 2,
+                        config: {
+                            iceServers: [
+                                { urls: 'stun:stun.l.google.com:19302' },
+                                { urls: 'stun:stun1.l.google.com:19302' }
+                            ]
+                        }
+                    });
+                    
                     fallbackPeer.on('open', (id) => {
+                        console.log('Fallback peer opened with ID:', id);
                         setPeerId(id);
                         setConnectionStatus('ready');
                     });
+                    
+                    fallbackPeer.on('call', (call) => {
+                        console.log('Incoming call on fallback peer');
+                        setConnectionStatus('incoming');
+                        const currentStream = localStreamRef.current;
+                        if (currentStream) {
+                            call.answer(currentStream);
+                            handleCallStream(call);
+                        } else {
+                            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                                .then(stream => {
+                                    localStreamRef.current = stream;
+                                    setLocalStream(stream);
+                                    call.answer(stream);
+                                    handleCallStream(call);
+                                })
+                                .catch(err => {
+                                    console.error('Failed to get media:', err);
+                                    setConnectionStatus('error');
+                                });
+                        }
+                    });
+                    
+                    fallbackPeer.on('error', (fallbackErr) => {
+                        console.error('Fallback peer error:', fallbackErr);
+                        setConnectionStatus('error');
+                    });
+                    
                     peerRef.current = fallbackPeer;
+                } else {
+                    setConnectionStatus('error');
                 }
             });
 
@@ -122,7 +191,7 @@ function VideoCall({ isOpen, onClose }) {
             console.error('Failed to initialize VideoCall component:', err);
             setConnectionStatus('error');
         }
-    }, [requestMediaPermissions, localStream]);
+    }, [requestMediaPermissions, handleCallStream]);
 
     // Sync video elements with streams
     useEffect(() => {
@@ -131,35 +200,20 @@ function VideoCall({ isOpen, onClose }) {
         }
     }, [localStream]);
 
-    // Helper for handling call streams
-    const handleCallStream = (call) => {
-        call.on('stream', (remoteStream) => {
-            console.log('Remote stream received');
-            if (remoteVideoRef.current) {
-                remoteVideoRef.current.srcObject = remoteStream;
-            }
-            setIsConnected(true);
-            setConnectionStatus('connected');
-        });
-
-        call.on('close', () => {
-            console.log('Call closed');
-            setIsConnected(false);
-            setConnectionStatus('ready');
-        });
-
-        callRef.current = call;
-    };
 
     // Call a remote peer
     const callPeer = useCallback(async () => {
         if (!remotePeerId.trim() || !peerRef.current) return;
 
         // Ensure we have a local stream before calling
-        if (!localStream) {
+        const currentStream = localStreamRef.current;
+        if (!currentStream) {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                localStreamRef.current = stream;
                 setLocalStream(stream);
+                setConnectionStatus('calling');
+                console.log('Calling peer:', remotePeerId.trim().toUpperCase());
                 const call = peerRef.current.call(remotePeerId.trim().toUpperCase(), stream);
                 handleCallStream(call);
             } catch (err) {
@@ -170,11 +224,10 @@ function VideoCall({ isOpen, onClose }) {
         } else {
             setConnectionStatus('calling');
             console.log('Calling peer:', remotePeerId.trim().toUpperCase());
-
-            const call = peerRef.current.call(remotePeerId.trim().toUpperCase(), localStream);
+            const call = peerRef.current.call(remotePeerId.trim().toUpperCase(), currentStream);
             handleCallStream(call);
         }
-    }, [remotePeerId, localStream]);
+    }, [remotePeerId, handleCallStream]);
 
     // Toggle audio
     const toggleAudio = useCallback(() => {

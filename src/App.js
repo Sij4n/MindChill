@@ -19,6 +19,7 @@ function App() {
   const [isPomodoroOpen, setIsPomodoroOpen] = useState(false);
   const [isTodoOpen, setIsTodoOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
@@ -46,16 +47,37 @@ function App() {
         setIsPomodoroOpen(prev => !prev);
       } else if (key === 't') {
         setIsTodoOpen(prev => !prev);
+      } else if (key === 'f') {
+        toggleFullscreen();
       }
     };
 
     window.addEventListener('keydown', handleGlobalKeyDown);
 
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
     return () => {
       splash.removeEventListener('click', handleStart);
       window.removeEventListener('keydown', handleGlobalKeyDown);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
 
   return (
     <div className="app">
@@ -101,6 +123,21 @@ function App() {
               <line x1="12" y1="16" x2="12" y2="12" />
               <line x1="12" y1="8" x2="12.01" y2="8" />
             </svg>
+          </button>
+          <button
+            className="icon-btn"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            {isFullscreen ? (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+              </svg>
+            )}
           </button>
           <button
             className="icon-btn"
@@ -163,6 +200,7 @@ function App() {
                   <div className="shortcut-item"><kbd>M</kbd> <span>Mute</span></div>
                   <div className="shortcut-item"><kbd>C</kbd> / <kbd>P</kbd> <span>Timer</span></div>
                   <div className="shortcut-item"><kbd>T</kbd> <span>Todo</span></div>
+                  <div className="shortcut-item"><kbd>F</kbd> <span>Fullscreen</span></div>
                 </div>
               </div>
 
