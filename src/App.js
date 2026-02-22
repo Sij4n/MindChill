@@ -12,17 +12,55 @@ import MusicPlayer from './components/MusicPlayer/MusicPlayer';
 import PomodoroTimer from './components/PomodoroTimer/PomodoroTimer';
 import TodoList from './components/TodoList/TodoList';
 import VideoCall from './components/VideoCall/VideoCall';
+import { useEffect } from 'react';
 
 function App() {
   const [isVideoCallOpen, setIsVideoCallOpen] = useState(false);
   const [isPomodoroOpen, setIsPomodoroOpen] = useState(false);
   const [isTodoOpen, setIsTodoOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+
+  useEffect(() => {
+    const splash = document.getElementById('splash-screen');
+    if (!splash) return;
+
+    const handleStart = () => {
+      splash.classList.add('fade-out');
+      setHasStarted(true);
+      setTimeout(() => {
+        splash.remove();
+      }, 800);
+    };
+
+    splash.addEventListener('click', handleStart);
+
+    const handleGlobalKeyDown = (e) => {
+      // Don't trigger if user is typing in an input or textarea
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
+        return;
+      }
+
+      const key = e.key.toLowerCase();
+      if (key === 'c' || key === 'p') {
+        setIsPomodoroOpen(prev => !prev);
+      } else if (key === 't') {
+        setIsTodoOpen(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+
+    return () => {
+      splash.removeEventListener('click', handleStart);
+      window.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, []);
 
   return (
     <div className="app">
       {/* Fullscreen Music Player with Backdrop */}
-      <MusicPlayer />
+      <MusicPlayer autoPlay={hasStarted} />
 
       {/* Header Overlay */}
       <header className="header-overlay">
@@ -114,34 +152,23 @@ function App() {
           <div className="popup-container about-popup" onClick={(e) => e.stopPropagation()}>
             <button className="popup-close" onClick={() => setIsAboutOpen(false)}>✕</button>
             <div className="about-content glass-card">
-              <h2 className="about-title">About Mind Chill</h2>
-              <div className="about-section">
-                <h3>The Project</h3>
-                <p>
-                  Mind Chill is a curated workspace designed to enhance focus, relaxation, and productivity.
-                  Combining aesthetic pixel art visuals with lo-fi beats, it provides a cozy
-                  virtual environment for study, work, or meditation.
-                </p>
+              <h2 className="about-title">Mind Chill</h2>
+              <p className="about-subtitle">Your aesthetic lofi workspace for deep focus.</p>
+
+              <div className="shortcuts-section">
+                <h3>⌨️ Shortcuts</h3>
+                <div className="shortcuts-grid">
+                  <div className="shortcut-item"><kbd>Space</kbd> <span>Play/Pause</span></div>
+                  <div className="shortcut-item"><kbd>G</kbd> <span>Backdrop</span></div>
+                  <div className="shortcut-item"><kbd>M</kbd> <span>Mute</span></div>
+                  <div className="shortcut-item"><kbd>C</kbd> / <kbd>P</kbd> <span>Timer</span></div>
+                  <div className="shortcut-item"><kbd>T</kbd> <span>Todo</span></div>
+                </div>
               </div>
-              <div className="about-section">
-                <h3>Features</h3>
-                <ul>
-                  <li>🎵 Curated Lofi Streams & Interactive Backdrops</li>
-                  <li>⏱️ Built-in Pomodoro Timer for deep focus</li>
-                  <li>✅ Integrated To-Do List to track progress</li>
-                  <li>📹 "Study With Me" Peer-to-Peer Video Calling</li>
-                </ul>
-              </div>
-              <div className="about-section">
-                <h3>The Creator</h3>
-                <p>
-                  Developed with ❤️ by <strong>Sijan Pradhan</strong>.
-                  My goal was to create a minimal yet powerful hub that helps people
-                  stay productive while enjoying a peaceful atmosphere.
-                </p>
-              </div>
+
               <div className="about-footer">
-                <p>© 2026 Mind Chill • Stay Cozy</p>
+                <p>Made with  by Sijan Pradhan</p>
+                <p>© 2026 • Stay Cozy</p>
               </div>
             </div>
           </div>
