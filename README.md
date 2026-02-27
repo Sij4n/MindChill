@@ -19,19 +19,31 @@
 ## ✨ Features
 
 - **🎧 Curated Lofi Streams**: Seamlessly switch between high-quality lofi stations with custom backdrops.
-- **⏱️ Pomodoro Timer**: provides specific focus intervals with a built-in timer to boost productivity.
+- **⏱️ Pomodoro Timer**: Provides specific focus intervals with a built-in timer to boost productivity.
 - **📝 Integrated Todo List**: Persist tasks locally and track your daily progress.
 - **📹 Study With Me**: Peer-to-peer video calling capability for remote study sessions (powered by PeerJS).
-- **🎨 Monochrome Theme**: A clean, distraction-free aesthetic using a strict black/white/gray palette.
+- **🖥️ Fullscreen Mode**: Immerse yourself with one click or keypress (`F`).
+- **🖼️ Interactive Backdrops**: Click anywhere on the background to cycle through curated GIF environments.
+- **⚙️ Settings Panel**: Access a dedicated menu to switch stations and backdrops.
+- **ℹ️ About Modal**: In-app documentation for shortcuts and project details.
 - **⚡ Glassmorphism UI**: Modern, translucent interface elements for a premium feel.
+
+## ⌨️ Keyboard Shortcuts
+
+- **Space**: Play / pause music
+- **G**: Shuffle / change backdrop
+- **M**: Mute / unmute audio
+- **C / P**: Toggle Pomodoro timer
+- **T**: Toggle Todo list
+- **F**: Toggle Fullscreen mode
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: [React.js](https://reactjs.org/)
+- **Frontend**: [React.js](https://reactjs.org/) (v19)
 - **Styling**: Custom CSS3 (Variables, Flexbox, Grid, Glassmorphism)
 - **Video Integration**: `react-youtube`
 - **P2P Communication**: `peerjs`
-- **State Management**: React Hooks (`useState`, `useEffect`)
+- **State Management**: React Hooks (`useState`, `useEffect`, `useCallback`, `useRef`)
 
 ## 🚀 Getting Started
 
@@ -76,12 +88,12 @@ mind-chill/
 │   └── manifest.json    # App metadata
 ├── src/
 │   ├── components/      # UI Components
-│   │   ├── MusicPlayer/ # Main Player Logic & UI
-│   │   ├── Pomodoro/    # Timer Logic
+│   │   ├── MusicPlayer/ # Main Player Logic, Backdrops & Ticker
+│   │   ├── PomodoroTimer/    # Timer Logic
 │   │   ├── TodoList/    # Task Management
 │   │   └── VideoCall/   # PeerJS Implementation
-│   ├── App.js           # Main Layout & Routing
-│   ├── App.css          # App-wide Styles
+│   ├── App.js           # Main Layout, Modals & Fullscreen Logic
+│   ├── App.css          # App-wide Styles & Theme
 │   ├── index.js         # DOM Rendering
 │   └── index.css        # Global Variables & Reset
 ├── README.md            # Documentation

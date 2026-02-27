@@ -51,7 +51,17 @@ const BACKDROP_GIFS = [
         id: 5,
         name: 'Sunset Drive',
         url: 'https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbTZ5ZnFzcGl1Y2g4N2t4ajAxdGRuamlydHBnZzYwcG9xYm5xYjljZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tkaDAjbZUmoH1a1Z2R/giphy.gif'
-    }
+    },
+    {
+        id: 6,
+        name: 'Clove',
+        url: 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWRnOG54ZnFibTlwdnJ6NXRsNjVrZzBxdWl3ZWZiNXVyY2prbGg2NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Am8zitLeNJlxlXarDT/giphy.gif'
+    },
+    {
+        id: 7,
+        name: 'ChineseCat',
+        url: 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzhwdHZheGhoeWlsNnNvdW0zNGtqZTJmOWJkeWp0N2NkNnFhYmp5ayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3UkqVq3F50bVCi9URl/giphy.gif'
+    },
 ];
 
 function MusicPlayer({ autoPlay }) {
