@@ -1,43 +1,54 @@
-# Mind Chill — workspace improvements
+# Project status
 
-Mind Chill stays centered on music, scenery, and a calm place to focus. The updated interface uses sage accents, warm text, softer surfaces, quieter typography, and clearer navigation, with rose and lavender accent options.
+[← README](README.md) · [Development](docs/DEVELOPMENT.md) · [Music sources](MUSIC_SOURCES.md)
 
-## Added
+Updated 17 October 2026. This page distinguishes implemented behavior from remaining work.
 
-- An optional display name in personalization.
-- A saved session intention and daily progress inside the Focus panel; the center stays open for scenery.
-- Adjustable focus sessions from 1 to 120 minutes, with short and long breaks.
-- A deadline-based timer that catches up when a background tab becomes active.
-- Local completion history and an adjustable daily focus goal.
-- A compact running-timer indicator near the header.
-- Three starter atmosphere presets and up to six named personal presets.
-- Presets that restore station, scene, volume, mute, and still-scene preferences.
-- An explicit next-scene control, plus an animated-scene fallback.
-- Still scenes as an initial reduced-motion default, with explicit GIF choices allowed to override it.
-- Updated task, timer, About, and personalization panels, with shared dialog behavior.
+## Implemented
 
-Preferences and completed-session history stay on this device. A page refresh resets the current timer, but retains focus length, intention, goal, history, and saved workspaces.
+- An open workspace with translucent controls and sage, rose, or lavender accents.
+- Seven music selections across six genres, source links, status messages, and retry/next-station recovery.
+- A reused YouTube player for station changes, guarded commands, and an initial connection timeout.
+- Six external GIF scenes, an explicit next-scene control, and a still-gradient fallback. The removed cat scene is absent; saved presets that referenced it migrate to Rainy Window.
+- Three starter atmosphere presets and up to six personal scene/audio presets.
+- Adjustable focus sessions, fixed short/long breaks, pause/reset, and deadline-based background catch-up.
+- A session intention, daily goal, completed-session history, and compact running countdown.
+- Persistent tasks with filters and a task-to-focus action.
+- An autosaving scratchpad with word count and plain-text export.
+- An optional display name and preferences stored locally.
+- Shared focus-managed dialogs for Focus, Tasks, Notes, personalization, About, and Scenes & sounds.
+- A separate one-to-one PeerJS study-room interface.
 
-## Next improvements
+The center stays clear of a permanent productivity dashboard. Detailed tools appear in panels.
 
-1. Study-room connection reliability: ignore late camera requests after closing, stop their tracks, add incoming-call accept/decline controls, and show connection timeouts.
-2. Restore an interrupted timer after refresh, with an explicit resume decision.
-3. Add a small weekly review of completed focus sessions.
-4. Add opt-in ambient sound mixing and completion sounds.
-5. Add a small weekly summary, without penalizing rest days.
-6. Modernize the build tooling in a separate change.
+## Verification and screenshots
 
-## Verification
+The code update passed the production build, ESLint, and 19 regression tests. Those tests cover preference recovery, dialog focus, timer continuity and completion, presets, genre selection, player failure handling, removed-scene migration, notes, and task-to-intention flow.
 
-The workspace, scene/preset dialog, focus timer, and personalization panel were visually checked in the browser, including a 390-pixel mobile layout. Regression tests cover preference recovery, popup focus, timer continuity and background catch-up, session recording, long-break cadence, saved presets, and personalization. The production build and lint checks pass.
+Six sources reached the embedded player's **Now playing** state during the last recorded audit; the [source log](MUSIC_SOURCES.md) lists exactly what was checked. Integration tests mock YouTube and the study-room component, so passing tests alone do not establish media availability or peer connectivity.
 
-The automated tests mock YouTube and the study-room integration. Live peer-to-peer connectivity was not tested. Scene availability still depends on remote GIF hosting; the new gradient fallback remains usable when an image fails.
+Fresh [screenshots](docs/screenshots/README.md) document the current desktop and mobile UI. They use sample content and the still scene. Live study-call connectivity was not tested as part of those captures.
 
-## Music and productivity update
+## Current limitations
 
-- Replaced the removed Resonance link and the blocked piano/ambient sources.
-- Added genre filters, source attribution links, playback recovery controls, and a player connection timeout.
-- Reused the YouTube player across station changes and guarded third-party API commands against failures.
-- Removed the Chinese cat backdrop; old saved presets retain their other settings and use Rainy Window.
-- Added an autosaving scratchpad with text export, available from Notes.
-- Added a target button beside active tasks to use a task as the session intention and open Focus.
+| Area | Current behavior |
+| --- | --- |
+| Active timer | Closing Focus preserves it; refreshing or closing the page resets it. |
+| Storage | Browser-local only; no account sync, cloud backup, or cross-tab synchronization. |
+| Backup | Notes export is available. Tasks, presets, and session history have no import/export flow. |
+| External media | YouTube embedding, regional availability, remote GIFs, and network access can change. |
+| Together | One-to-one calls only; no shared timer, tasks, or notes. Incoming calls can be answered automatically. |
+| Call lifecycle | Pending media requests may resolve after closing. Fallback room codes and network failure recovery need work. |
+| Network traversal | STUN is configured, but no TURN relay is configured for restrictive networks. |
+| Accessibility | Together uses separate modal behavior and does not yet match every shared Dialog interaction. |
+| Showcase | The optional promo presentation can lag behind the normal workspace and is not a screenshot source. |
+
+## Suggested next work
+
+1. Improve study-room consent, pending-request cleanup, fallback room codes, timeout/retry states, and dialog behavior.
+2. Restore interrupted focus sessions after refresh with an explicit resume decision.
+3. Add export/import for important local data and a small weekly review of completed sessions.
+4. Explore opt-in ambient sound mixing and completion sounds.
+5. Modernize the build tooling in a separate, tested change.
+
+These items are planned improvements, not existing features.

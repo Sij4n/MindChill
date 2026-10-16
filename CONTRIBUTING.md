@@ -1,65 +1,62 @@
 # Contributing to Mind Chill
 
-First off, thanks for taking the time to contribute! ❤️
+Help make the workspace calmer, more reliable, and easier to use. Start with the [README](README.md), [user guide](docs/USER_GUIDE.md), and [development notes](docs/DEVELOPMENT.md).
 
-All types of contributions are encouraged and valued. See the [Table of Contents](#table-of-contents) for different ways to help and details about how this project handles them. Please make sure to read the relevant section before making your contribution. It will make it a lot easier for us maintainers and smooth out the experience for all involved. The community looks forward to your contributions.
+## Report a bug or suggest a feature
 
-## Table of Contents
+Search [existing issues](https://github.com/Sij4n/MindChill/issues) first. Include:
 
-- [Code of Conduct](#code-of-conduct)
-- [I Have a Question](#i-have-a-question)
-- [I Want To Contribute](#i-want-to-contribute)
-- [Reporting Bugs](#reporting-bugs)
-- [Suggesting Enhancements](#suggesting-enhancements)
-- [Your First Code Contribution](#your-first-code-contribution)
+- Steps to reproduce and expected versus actual behavior.
+- Browser, operating system, and viewport/device where relevant.
+- The visible error, station/source URL, or scene name for media issues.
+- A screenshot with personal notes, tasks, and room codes removed.
 
-## Code of Conduct
+For feature proposals, explain the user need and how the feature fits a quiet music-and-focus workspace. Keep the center open; use panels for task management and detailed tools.
 
-This project and everyone participating in it is governed by the [Mind Chill Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [sijan@example.com] (replace with actual contact if available).
+## Make a change
 
-## I Have a Question
+```bash
+git clone https://github.com/YOUR_USERNAME/MindChill.git
+cd MindChill
+npm ci
+git switch -c feature/your-change
+npm start
+```
 
-> If you want to ask a question, we assume that you have read the available [Documentation](README.md).
+Fork the repository before using the clone example, or use your authorized checkout. Keep changes focused and preserve existing behavior outside the task.
 
-Before you ask a question, it is best to search for existing [Issues](https://github.com/Sij4n/MindChill/issues) that might help you. In case you've found a suitable issue and still need clarification, you can write your question in this issue. It is also advisable to search the internet for answers first.
+Before opening a pull request:
 
-## I Want To Contribute
+```bash
+npm run lint
+npm test -- --watchAll=false --runInBand
+npm run build
+```
 
-### Reporting Bugs
+Describe the problem, resulting behavior, validation, and any remaining limitation. Add current screenshots for visible UI changes, following the [screenshot guide](docs/screenshots/README.md).
 
-- Make sure that you are using the latest version.
-- Read existing documentation to confirm the functionality.
-- Check if the issue has already been reported.
-- Collect details about your environment (OS, Browser, etc.).
+## Implementation guidelines
 
-### Suggesting Enhancements
+- Use shared theme tokens, spacing, typography, and Dialog behavior where appropriate.
+- Keep keyboard labels, visible focus, panel scrolling, and mobile layouts usable.
+- Respect reduced motion while allowing explicit GIF selections.
+- Keep local-storage keys stable. Migrate saved data when catalog positions or data shapes change.
+- Add regression coverage for meaningful behavior changes, particularly timer completion, media failures, and saved-data migration.
+- Keep notes, tasks, and preferences local unless a separately designed sync feature is introduced.
+- Handle unavailable external services with visible recovery paths.
 
-- **Use a clear and descriptive title** for the issue to identify the suggestion.
-- **Provide a step-by-step description of the suggested enhancement** in as many details as possible.
-- **Explain why this enhancement would be useful** to most Mind Chill users.
+## Music and backdrop changes
 
-### Your First Code Contribution
+Update the catalog and [music audit](MUSIC_SOURCES.md) together. A successful watch page or oEmbed response is not sufficient: test the source in the app and confirm the player reaches **Now playing**. Check pause/resume, volume, mute, switching, and failure recovery.
 
-1.  Fork the repository.
-2.  Clone your fork locally.
-3.  Create a new branch (`git checkout -b feature/AmazingFeature`).
-4.  Commit your changes (`git commit -m 'feat: Add some AmazingFeature'`).
-5.  Push to the branch (`git push origin feature/AmazingFeature`).
-6.  Open a Pull Request.
+Retain attribution. Third-party music and GIF rights are separate from the application code's MIT license. Do not commit downloaded media without suitable rights.
 
-## Styleguides
+Saved presets currently reference catalog array indexes. Preserve positions or implement a migration, as described in [development notes](docs/DEVELOPMENT.md#change-music-or-scenes).
 
-### Commit Messages
+## Commit messages and communication
 
-We follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
+Use a clear message such as `fix: handle unavailable music` or `docs: refresh workspace screenshots`. Explain what changed and why. Keep discussion respectful and focused on the work; use GitHub issues and pull requests rather than placeholder contact addresses.
 
-- `feat`: A new feature
-- `fix`: A bug fix
-- `docs`: Documentation only changes
-- `style`: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
-- `refactor`: A code change that neither fixes a bug nor adds a feature
-- `perf`: A code change that improves performance
-- `test`: Adding missing tests or correcting existing tests
-- `chore`: Changes to the build process or auxiliary tools and libraries such as documentation generation
+## Documentation changes
 
-Happy coding! 🚀
+Keep commands aligned with `package.json`; the current development command is `npm start`. Update README links, the user guide, source checks, and relevant screenshots when the interface or its behavior changes. Separate implemented behavior from planned improvements.
