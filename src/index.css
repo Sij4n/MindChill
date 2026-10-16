@@ -21,14 +21,14 @@
   --container-padding: 1rem;
 
   /* Colors - Minimal Theme */
-  --color-bg-primary: #000000;
-  --color-bg-secondary: #0a0a0a;
-  --color-bg-tertiary: #1a1a1a;
+  --color-bg-primary: #142019;
+  --color-bg-secondary: #19271f;
+  --color-bg-tertiary: #26352b;
 
   /* Accent Colors - Monochrome */
-  --color-accent-primary: #ffffff;
-  --color-accent-secondary: #cccccc;
-  --color-accent-glow: rgba(255, 255, 255, 0.15);
+  --color-accent-primary: #cad8ad;
+  --color-accent-secondary: #dbe5c8;
+  --color-accent-glow: rgba(202, 216, 173, .2);
 
   /* Removed Sunset Colors */
 
@@ -39,17 +39,18 @@
   --color-danger: #ef4444;
 
   /* Text Colors */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #a1a1aa;
+  --color-text-primary: #f1f1e8;
+  --color-text-secondary: #bdc5b9;
   --color-text-muted: #52525b;
 
   /* Glassmorphism - Neutral */
-  --glass-bg: rgba(0, 0, 0, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(22, 33, 26, .88);
+  --glass-border: rgba(221, 233, 211, .14);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --glass-blur: blur(12px);
+  --glass-blur: blur(22px);
 
   /* Typography */
+  --font-display: Georgia, 'Times New Roman', serif;
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   --font-retro: 'VT323', monospace;
@@ -80,7 +81,7 @@
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  --radius-xl: 1.25rem;
   --radius-2xl: 1.5rem;
   --radius-full: 9999px;
 
@@ -194,3 +195,19 @@ ul,
 ol {
   list-style: none;
 }
+/* Shared readable controls and motion preferences. */
+:root { --color-text-muted: #b5bfaf; }
+input:focus-visible, textarea:focus-visible { outline: 2px solid var(--color-accent-primary); outline-offset: 3px; }
+button:disabled { cursor: not-allowed; }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .ticker-content { display: block; }
+  .ticker-text + .ticker-text { display: none; }
+  .ticker-text { white-space: normal; }
+  .splash-subtitle, .splash-cta { opacity: 1 !important; }
+}
+
+:root[data-theme="rose"] { --color-accent-primary: #e8bcb7; --color-accent-secondary: #f0d1cd; --color-accent-glow: rgba(232,188,183,.2); }
+:root[data-theme="lavender"] { --color-accent-primary: #ccc1e8; --color-accent-secondary: #ded6f1; --color-accent-glow: rgba(204,193,232,.2); }
+select, option { color-scheme: dark; }

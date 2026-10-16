@@ -31,15 +31,15 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #0a0a0a;
+      background: radial-gradient(ellipse at 30% 30%, #3c5140, #131f18 70%);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 9999;
       transition: opacity 0.8s ease-out, visibility 0.8s;
-      color: #ffffff;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #edf0e6;
+      font-family: Georgia, 'Times New Roman', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       cursor: pointer;
     }
 
@@ -54,11 +54,11 @@
     }
 
     .splash-title {
-      font-size: 3.5rem;
+      font-size: clamp(2rem, 8vw, 3.5rem);
       font-weight: 700;
-      letter-spacing: 0.2em;
+      letter-spacing: -0.04em;
       margin-bottom: 0.5rem;
-      text-transform: uppercase;
+      text-transform: none;
       background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
       -webkit-background-clip: text;
       background-clip: text;
@@ -68,8 +68,8 @@
     .splash-subtitle {
       font-size: 1.2rem;
       font-weight: 300;
-      letter-spacing: 0.4em;
-      color: #888;
+      letter-spacing: 0.06em;
+      color: #bdc5b9;
       margin-top: 1rem;
       opacity: 0;
       animation: fadeInDelayed 1.5s ease-out 0.5s forwards;
@@ -80,7 +80,7 @@
       bottom: 2rem;
       font-size: 0.9rem;
       letter-spacing: 0.2rem;
-      color: #555;
+      color: #a1a1aa;
       text-transform: uppercase;
       opacity: 0;
       animation: pulse 2s infinite ease-in-out 2s;
@@ -123,12 +123,12 @@
 </head>
 
 <body>
-  <div id="splash-screen">
+  <div id="splash-screen" role="button" tabindex="0" aria-label="Start Mind Chill">
     <div class="splash-content">
-      <h1 class="splash-title">MIND CHILL</h1>
-      <p class="splash-subtitle">Let's LOCK IN...</p>
+      <h1 class="splash-title">mind chill.</h1>
+      <p class="splash-subtitle">A little room for you.</p>
     </div>
-    <div class="splash-cta">Click anywhere to start</div>
+    <div class="splash-cta">Click or press Enter to start</div>
   </div>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>

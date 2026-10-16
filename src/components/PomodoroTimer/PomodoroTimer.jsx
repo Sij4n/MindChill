@@ -1,190 +1,22 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React from 'react';
+import { Play, Pause, RotateCcw, Coffee } from 'lucide-react';
+import useFocusTimer, { MODES, formatTime } from '../../useFocusTimer';
 import './PomodoroTimer.css';
 
-const TIMER_MODES = {
-    WORK: { name: 'Focus', duration: 25 * 60, color: '#8b5cf6' },
-    SHORT_BREAK: { name: 'Short Break', duration: 5 * 60, color: '#10b981' },
-    LONG_BREAK: { name: 'Long Break', duration: 15 * 60, color: '#3b82f6' }
-};
-
-function PomodoroTimer() {
-    const [mode, setMode] = useState('WORK');
-    const [timeLeft, setTimeLeft] = useState(TIMER_MODES.WORK.duration);
-    const [isRunning, setIsRunning] = useState(false);
-    const [sessions, setSessions] = useState(0);
-    const intervalRef = useRef(null);
-
-    const currentMode = TIMER_MODES[mode];
-    const progress = ((currentMode.duration - timeLeft) / currentMode.duration) * 100;
-
-    const playNotification = useCallback(() => {
-        // Create a simple beep sound
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-
-        oscillator.frequency.value = 800;
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.5);
-    }, []);
-
-    const switchMode = useCallback((newMode) => {
-        setMode(newMode);
-        setTimeLeft(TIMER_MODES[newMode].duration);
-        setIsRunning(false);
-    }, []);
-
-    const handleTimerComplete = useCallback(() => {
-        playNotification();
-
-        if (mode === 'WORK') {
-            const newSessions = sessions + 1;
-            setSessions(newSessions);
-
-            // After 4 work sessions, take a long break
-            if (newSessions % 4 === 0) {
-                switchMode('LONG_BREAK');
-            } else {
-                switchMode('SHORT_BREAK');
-            }
-        } else {
-            switchMode('WORK');
-        }
-    }, [mode, sessions, playNotification, switchMode]);
-
-    useEffect(() => {
-        if (isRunning && timeLeft > 0) {
-            intervalRef.current = setInterval(() => {
-                setTimeLeft((prev) => prev - 1);
-            }, 1000);
-        } else if (timeLeft === 0) {
-            handleTimerComplete();
-        }
-
-        return () => {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-            }
-        };
-    }, [isRunning, timeLeft, handleTimerComplete]);
-
-    const toggleTimer = () => {
-        setIsRunning(!isRunning);
-    };
-
-    const resetTimer = () => {
-        setIsRunning(false);
-        setTimeLeft(currentMode.duration);
-    };
-
-    const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    };
-
-    // SVG circle calculations
-    const radius = 90;
-    const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (progress / 100) * circumference;
-
-    return (
-        <div className="pomodoro-timer glass-card">
-            <div className="timer-header">
-                <h2>⏱️ Pomodoro Timer</h2>
-                <div className="session-count">
-                    <span className="session-icon">🎯</span>
-                    <span>{sessions} sessions</span>
-                </div>
-            </div>
-
-            {/* Mode Tabs */}
-            <div className="mode-tabs">
-                {Object.entries(TIMER_MODES).map(([key, value]) => (
-                    <button
-                        key={key}
-                        className={`mode-tab ${mode === key ? 'active' : ''}`}
-                        onClick={() => switchMode(key)}
-                    >
-                        {value.name}
-                    </button>
-                ))}
-            </div>
-
-            {/* Timer Display */}
-            <div className="timer-display">
-                <svg className="progress-ring" width="220" height="220">
-                    {/* Background circle */}
-                    <circle
-                        className="progress-ring-bg"
-                        stroke="rgba(255,255,255,0.1)"
-                        strokeWidth="8"
-                        fill="transparent"
-                        r={radius}
-                        cx="110"
-                        cy="110"
-                    />
-                    {/* Progress circle */}
-                    <circle
-                        className="progress-ring-progress"
-                        stroke={currentMode.color}
-                        strokeWidth="8"
-                        strokeLinecap="round"
-                        fill="transparent"
-                        r={radius}
-                        cx="110"
-                        cy="110"
-                        style={{
-                            strokeDasharray: circumference,
-                            strokeDashoffset: strokeDashoffset,
-                            transform: 'rotate(-90deg)',
-                            transformOrigin: '50% 50%',
-                            transition: 'stroke-dashoffset 0.5s ease'
-                        }}
-                    />
-                </svg>
-                <div className="timer-text">
-                    <span className="time">{formatTime(timeLeft)}</span>
-                    <span className="mode-label" style={{ color: currentMode.color }}>
-                        {currentMode.name}
-                    </span>
-                </div>
-            </div>
-
-            {/* Controls */}
-            <div className="timer-controls">
-                <button
-                    className={`control-btn primary ${isRunning ? 'pause' : 'play'}`}
-                    onClick={toggleTimer}
-                >
-                    {isRunning ? '⏸️ Pause' : '▶️ Start'}
-                </button>
-                <button
-                    className="control-btn secondary"
-                    onClick={resetTimer}
-                >
-                    🔄 Reset
-                </button>
-            </div>
-
-            {/* Progress indicators */}
-            <div className="progress-dots">
-                {[1, 2, 3, 4].map((dot) => (
-                    <span
-                        key={dot}
-                        className={`dot ${sessions % 4 >= dot ? 'completed' : ''}`}
-                    />
-                ))}
-            </div>
-        </div>
-    );
+export function TimerPanel({ timer }) {
+  const progress = (timer.duration - timer.timeLeft) / timer.duration;
+  return <section className="pomodoro-timer glass-card">
+    <div className="panel-heading"><span className="eyebrow">MAKE A LITTLE SPACE</span><h2>Find your flow</h2><p>One thing at a time is enough.</p></div>
+    <div className="mode-tabs">{Object.entries(MODES).map(([key, name]) => <button key={key} className={`mode-tab ${timer.mode === key ? 'active' : ''}`} aria-pressed={timer.mode === key} onClick={() => timer.switchMode(key)}>{name}</button>)}</div>
+    <div className="timer-display">
+      <svg viewBox="0 0 220 220" className="progress-ring" aria-hidden="true"><circle cx="110" cy="110" r="96" fill="none" stroke="var(--glass-border)" strokeWidth="3" /><circle cx="110" cy="110" r="96" fill="none" stroke="var(--color-accent-primary)" strokeWidth="3" strokeLinecap="round" strokeDasharray={Math.PI * 192} strokeDashoffset={Math.PI * 192 * (1 - progress)} transform="rotate(-90 110 110)" /></svg>
+      <div className="timer-text"><span className="time">{formatTime(timer.timeLeft)}</span><span className="mode-label">{timer.isRunning ? 'You’re making space' : MODES[timer.mode]}</span></div>
+    </div>
+    <div className="timer-controls"><button className="primary-action" onClick={timer.toggle}>{timer.isRunning ? <Pause size={16} /> : <Play size={16} />}{timer.isRunning ? 'Pause' : 'Start'}</button><button className="secondary-action" onClick={timer.reset}><RotateCcw size={16} />Reset</button></div>
+    <label className="duration-field">Focus length <span><input aria-label="Focus minutes" type="number" min="1" max="120" value={timer.focusMinutes} disabled={timer.isRunning} onChange={e => timer.changeDuration(Number(e.target.value))} /> min</span></label>
+    <p className="panel-footnote"><Coffee size={15} /> Short breaks are 5 min. A longer break follows every 4 focus sessions today.</p>
+    {timer.notice && <p role="status" className="completion-note">{timer.notice}</p>}
+  </section>;
 }
-
-export default PomodoroTimer;
+function StandaloneTimer() { const timer = useFocusTimer(); return <TimerPanel timer={timer} />; }
+export default function PomodoroTimer({ timer }) { return timer ? <TimerPanel timer={timer} /> : <StandaloneTimer />; }

@@ -1,0 +1,8 @@
+.scratchpad-panel { padding: 32px; display: grid; gap: 20px; }
+.scratchpad-label { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--color-accent-primary); }
+.scratchpad-panel textarea { width: 100%; min-height: 260px; max-height: 48dvh; resize: vertical; border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; font-size: 13px; line-height: 1.9; background: rgba(255,255,255,.025); }
+.scratchpad-panel textarea::placeholder { color: var(--color-text-secondary); }
+.scratchpad-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.scratchpad-footer > span { font-size: 9px; color: var(--color-text-secondary); }
+.scratchpad-footer .secondary-action { padding: 9px 12px; font-size: 10px; }
+@media(max-width:480px) { .scratchpad-panel { padding: 26px; }.scratchpad-footer { flex-wrap: wrap; }.scratchpad-panel textarea { min-height: 200px; } }

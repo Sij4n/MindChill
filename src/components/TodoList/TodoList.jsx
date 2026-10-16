@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './TodoList.css';
+import useStoredState from '../../useStoredState';
+import { Plus, Trash2, Target } from 'lucide-react';
 
 const STORAGE_KEY = 'mindchill-todos';
 
-function TodoList() {
-    const [todos, setTodos] = useState(() => {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        return saved ? JSON.parse(saved) : [];
-    });
+function TodoList({ onFocusTask }) {
+    const [todos, setTodos] = useStoredState(STORAGE_KEY, [], v => Array.isArray(v) && v.every(t => t && typeof t.text === 'string' && typeof t.completed === 'boolean' && (typeof t.id === 'number' || typeof t.id === 'string')));
     const [inputValue, setInputValue] = useState('');
     const [filter, setFilter] = useState('all');
-
-    // Persist to localStorage
-    useEffect(() => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
-    }, [todos]);
 
     const addTodo = (e) => {
         e.preventDefault();
@@ -58,7 +52,7 @@ function TodoList() {
     return (
         <div className="todo-list glass-card">
             <div className="todo-header">
-                <h2>✅ To-Do List</h2>
+                <h2>Your little list.</h2>
                 <div className="todo-stats">
                     <span>{completedCount}/{totalCount}</span>
                 </div>
@@ -78,13 +72,13 @@ function TodoList() {
             <form className="add-todo-form" onSubmit={addTodo}>
                 <input
                     type="text"
-                    className="todo-input"
+                    className="todo-input" aria-label="New task" maxLength={300}
                     placeholder="What needs to be done?"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                 />
-                <button type="submit" className="add-btn" disabled={!inputValue.trim()}>
-                    ➕
+                <button type="submit" className="add-btn" aria-label="Add task" disabled={!inputValue.trim()}>
+                    <Plus size={20} />
                 </button>
             </form>
 
@@ -93,6 +87,7 @@ function TodoList() {
                 {['all', 'active', 'completed'].map((f) => (
                     <button
                         key={f}
+                        aria-pressed={filter === f}
                         className={`filter-tab ${filter === f ? 'active' : ''}`}
                         onClick={() => setFilter(f)}
                     >
@@ -106,10 +101,10 @@ function TodoList() {
                 {filteredTodos.length === 0 ? (
                     <li className="empty-state">
                         {filter === 'all'
-                            ? '🎯 Add your first task!'
+                            ? 'A little intention goes a long way. Add your first task.'
                             : filter === 'active'
-                                ? '🎉 All tasks completed!'
-                                : '📝 No completed tasks yet'}
+                                ? 'All clear. Take a moment for yourself.'
+                                : 'Your small wins will appear here.'}
                     </li>
                 ) : (
                     filteredTodos.map((todo) => (
@@ -118,19 +113,20 @@ function TodoList() {
                             className={`todo-item ${todo.completed ? 'completed' : ''}`}
                         >
                             <button
-                                className="checkbox"
+                                className="checkbox" role="checkbox" aria-checked={todo.completed}
                                 onClick={() => toggleTodo(todo.id)}
                                 aria-label={todo.completed ? 'Mark as incomplete' : 'Mark as complete'}
                             >
                                 {todo.completed && <span className="checkmark">✓</span>}
                             </button>
                             <span className="todo-text">{todo.text}</span>
+                            {onFocusTask && !todo.completed && <button className="task-focus-btn" aria-label={`Focus on ${todo.text}`} title="Use as your session intention" onClick={() => onFocusTask(todo.text)}><Target size={17} /></button>}
                             <button
                                 className="delete-btn"
                                 onClick={() => deleteTodo(todo.id)}
                                 aria-label="Delete task"
                             >
-                                🗑️
+                                <Trash2 size={18} />
                             </button>
                         </li>
                     ))
@@ -140,7 +136,7 @@ function TodoList() {
             {/* Footer Actions */}
             {completedCount > 0 && (
                 <button className="clear-btn" onClick={clearCompleted}>
-                    🧹 Clear completed ({completedCount})
+                    Clear completed ({completedCount})
                 </button>
             )}
         </div>

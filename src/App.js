@@ -1,225 +1,94 @@
-/**
- * Mind Chill - Main Application Component
- *
- * @author Sijan Pradhan
- * @description Orchestrates the main layout, state management for popups, and core feature integration.
- * @version 1.0.0
- */
-
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Leaf, Timer, ListTodo, Users, Maximize, Minimize, SlidersHorizontal, Info, Sparkles, NotebookPen } from 'lucide-react';
 import './App.css';
+import Dialog from './components/Dialog';
 import MusicPlayer from './components/MusicPlayer/MusicPlayer';
 import PomodoroTimer from './components/PomodoroTimer/PomodoroTimer';
 import TodoList from './components/TodoList/TodoList';
+import Scratchpad from './components/Scratchpad';
 import VideoCall from './components/VideoCall/VideoCall';
-import { useEffect } from 'react';
+import PromoVideo from './components/PromoVideo/PromoVideo';
+import useStoredState from './useStoredState';
+import useFocusTimer, { formatTime, localDay, MODES } from './useFocusTimer';
 
 function App() {
-  const [isVideoCallOpen, setIsVideoCallOpen] = useState(false);
-  const [isPomodoroOpen, setIsPomodoroOpen] = useState(false);
-  const [isTodoOpen, setIsTodoOpen] = useState(false);
-  const [isAboutOpen, setIsAboutOpen] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [panel, setPanel] = useState(null);
   const [hasStarted, setHasStarted] = useState(false);
-
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [name, setName] = useStoredState('mindchill-name', '', v => typeof v === 'string' && v.length <= 30);
+  const [intention, setIntention] = useStoredState('mindchill-intention', '', v => typeof v === 'string' && v.length <= 160);
+  const [goal, setGoal] = useStoredState('mindchill-daily-goal', 60, v => Number.isInteger(v) && v >= 15 && v <= 480);
+  const [theme, setTheme] = useStoredState('mindchill-theme', 'sage', v => ['sage', 'rose', 'lavender'].includes(v));
+  const timer = useFocusTimer();
+  useEffect(() => { document.documentElement.dataset.theme = theme; }, [theme]);
+  const closePanel = useCallback(() => setPanel(null), []);
+  const focusOnTask = useCallback(text => { setIntention(text.slice(0, 160)); setPanel('timer'); }, [setIntention]);
+  const isPromoMode = new URLSearchParams(window.location.search).get('promo') === 'true';
+  const toggleFullscreen = useCallback(async () => {
+    try { if (document.fullscreenElement) await document.exitFullscreen?.(); else await document.documentElement.requestFullscreen?.(); } catch { /* Browser may not support fullscreen. */ }
+  }, []);
   useEffect(() => {
     const splash = document.getElementById('splash-screen');
-    if (!splash) return;
-
-    const handleStart = () => {
-      splash.classList.add('fade-out');
-      setHasStarted(true);
-      setTimeout(() => {
-        splash.remove();
-      }, 800);
+    let timeout;
+    const start = () => { setHasStarted(true); splash?.classList.add('fade-out'); timeout = setTimeout(() => splash?.remove(), 800); };
+    const key = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); start(); } };
+    if (isPromoMode) { splash?.remove(); setHasStarted(true); }
+    splash?.addEventListener('click', start);
+    splash?.addEventListener('keydown', key);
+    return () => { clearTimeout(timeout); splash?.removeEventListener('click', start); splash?.removeEventListener('keydown', key); };
+  }, [isPromoMode]);
+  useEffect(() => {
+    const handle = e => {
+      if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.target.closest('input, textarea, select, button, a, [contenteditable="true"], [role="dialog"]')) return;
+      if (e.key.toLowerCase() === 'f') toggleFullscreen();
+      if (['c', 'p', 't'].includes(e.key.toLowerCase())) setPanel(previous => previous === (e.key.toLowerCase() === 't' ? 'tasks' : 'timer') ? null : e.key.toLowerCase() === 't' ? 'tasks' : 'timer');
     };
-
-    splash.addEventListener('click', handleStart);
-
-    const handleGlobalKeyDown = (e) => {
-      // Don't trigger if user is typing in an input or textarea
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
-        return;
-      }
-
-      const key = e.key.toLowerCase();
-      if (key === 'c' || key === 'p') {
-        setIsPomodoroOpen(prev => !prev);
-      } else if (key === 't') {
-        setIsTodoOpen(prev => !prev);
-      } else if (key === 'f') {
-        toggleFullscreen();
-      }
-    };
-
-    window.addEventListener('keydown', handleGlobalKeyDown);
-
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-
-    return () => {
-      splash.removeEventListener('click', handleStart);
-      window.removeEventListener('keydown', handleGlobalKeyDown);
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
-  }, []);
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-      });
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
-  };
-
-  return (
-    <div className="app">
-      {/* Fullscreen Music Player with Backdrop */}
-      <MusicPlayer autoPlay={hasStarted} />
-
-      {/* Header Overlay */}
-      <header className="header-overlay">
-        {/* Logo - Top Left */}
-        <div className="logo">
-          <span className="logo-text">Mind Chill</span>
-        </div>
-
-        {/* Icon Buttons - Top Right */}
-        <div className="icon-panel">
-          <button
-            className="icon-btn"
-            onClick={() => setIsPomodoroOpen(!isPomodoroOpen)}
-            title="Pomodoro Timer"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12,6 12,12 16,14" />
-            </svg>
-          </button>
-          <button
-            className="icon-btn"
-            onClick={() => setIsTodoOpen(!isTodoOpen)}
-            title="Todo List"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <path d="M9 12l2 2 4-4" />
-            </svg>
-          </button>
-          <button
-            className="icon-btn"
-            onClick={() => setIsAboutOpen(true)}
-            title="About Project"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="16" x2="12" y2="12" />
-              <line x1="12" y1="8" x2="12.01" y2="8" />
-            </svg>
-          </button>
-          <button
-            className="icon-btn"
-            onClick={toggleFullscreen}
-            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-          >
-            {isFullscreen ? (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-              </svg>
-            )}
-          </button>
-          <button
-            className="icon-btn"
-            onClick={() => setIsVideoCallOpen(true)}
-            title="Study With Me"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="2" y="5" width="14" height="14" rx="2" />
-              <path d="M16 10l6-4v12l-6-4v-4z" />
-            </svg>
-          </button>
-          <a
-            href="https://github.com/Sij4n?tab=overview&from=2025-10-01&to=2025-10-31"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="icon-btn"
-            title="GitHub"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-            </svg>
-          </a>
-        </div>
-      </header>
-
-      {/* Pomodoro Timer Popup */}
-      {isPomodoroOpen && (
-        <div className="popup-overlay" onClick={() => setIsPomodoroOpen(false)}>
-          <div className="popup-container" onClick={(e) => e.stopPropagation()}>
-            <button className="popup-close" onClick={() => setIsPomodoroOpen(false)}>✕</button>
-            <PomodoroTimer />
-          </div>
-        </div>
-      )}
-
-      {/* Todo List Popup */}
-      {isTodoOpen && (
-        <div className="popup-overlay" onClick={() => setIsTodoOpen(false)}>
-          <div className="popup-container" onClick={(e) => e.stopPropagation()}>
-            <button className="popup-close" onClick={() => setIsTodoOpen(false)}>✕</button>
-            <TodoList />
-          </div>
-        </div>
-      )}
-
-      {/* About Popup */}
-      {isAboutOpen && (
-        <div className="popup-overlay" onClick={() => setIsAboutOpen(false)}>
-          <div className="popup-container about-popup" onClick={(e) => e.stopPropagation()}>
-            <button className="popup-close" onClick={() => setIsAboutOpen(false)}>✕</button>
-            <div className="about-content glass-card">
-              <h2 className="about-title">Mind Chill</h2>
-              <p className="about-subtitle">Your aesthetic lofi workspace for deep focus.</p>
-
-              <div className="shortcuts-section">
-                <h3>⌨️ Shortcuts</h3>
-                <div className="shortcuts-grid">
-                  <div className="shortcut-item"><kbd>Space</kbd> <span>Play/Pause</span></div>
-                  <div className="shortcut-item"><kbd>G</kbd> <span>Backdrop</span></div>
-                  <div className="shortcut-item"><kbd>M</kbd> <span>Mute</span></div>
-                  <div className="shortcut-item"><kbd>C</kbd> / <kbd>P</kbd> <span>Timer</span></div>
-                  <div className="shortcut-item"><kbd>T</kbd> <span>Todo</span></div>
-                  <div className="shortcut-item"><kbd>F</kbd> <span>Fullscreen</span></div>
-                </div>
-              </div>
-
-              <div className="about-footer">
-                <p>Made with  by Sijan Pradhan</p>
-                <p>© 2026 • Stay Cozy</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Video Call Modal */}
-      <VideoCall
-        isOpen={isVideoCallOpen}
-        onClose={() => setIsVideoCallOpen(false)}
-      />
-    </div>
-  );
+    const changed = () => setIsFullscreen(!!document.fullscreenElement);
+    window.addEventListener('keydown', handle); document.addEventListener('fullscreenchange', changed);
+    return () => { window.removeEventListener('keydown', handle); document.removeEventListener('fullscreenchange', changed); };
+  }, [toggleFullscreen]);
+  const today = timer.history.filter(item => item.day === localDay());
+  const minutes = today.reduce((sum, item) => sum + item.minutes, 0);
+  const progress = Math.min(100, minutes / goal * 100);
+  return <div className="app" data-theme={theme}>
+    <MusicPlayer autoPlay={hasStarted} />
+    <header className="header-overlay">
+      <div className="workspace-brand"><span className="brand-mark"><Leaf size={22} /></span><div><span className="logo-text">mind chill<span className="brand-period">.</span></span><span className="brand-caption">A LITTLE ROOM FOR YOU</span></div></div>
+      <nav className="icon-panel" aria-label="Workspace tools">
+        <button className={`nav-tool ${panel === 'timer' ? 'selected' : ''}`} aria-label="Pomodoro Timer" onClick={() => setPanel('timer')}><Timer size={18} /><span>Focus</span></button>
+        <button className="nav-tool" aria-label="Todo List" onClick={() => setPanel('tasks')}><ListTodo size={18} /><span>Tasks</span></button>
+        <button className="nav-tool" aria-label="Study With Me" onClick={() => setPanel('study')}><Users size={18} /><span>Together</span></button>
+        <button className="nav-tool" aria-label="Scratchpad" onClick={() => setPanel('notes')}><NotebookPen size={18} /><span>Notes</span></button>
+        <span className="nav-divider" />
+        <button className="icon-btn" aria-label="Personalize workspace" title="Make it yours" onClick={() => setPanel('personalize')}><SlidersHorizontal size={18} /></button>
+        <button className="icon-btn fullscreen-tool" onClick={toggleFullscreen} aria-label={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'} title="Fullscreen">{isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}</button>
+      </nav>
+    </header>
+    {timer.isRunning && <button className="running-session glass-card" onClick={() => setPanel('timer')} aria-label="Open running focus timer"><span className="presence-dot" />{formatTime(timer.timeLeft)}<small>{MODES[timer.mode]}</small></button>}
+    {timer.notice && <p className="session-notice glass-card" role="status">{timer.notice}</p>}
+    <div className="workspace-utility"><button className="about-link" onClick={() => setPanel('about')} aria-label="About Project"><Info size={15} /><span>Slow down. Stay a while.</span></button></div>
+    <Dialog open={panel === 'timer'} onClose={closePanel} label="Pomodoro Timer">
+      <div className="focus-panel"><PomodoroTimer timer={timer} />
+        <section className="focus-details">
+          <label className="intention-label" htmlFor="session-intention"><Sparkles size={14} /> ONE THING FOR TODAY</label>
+          <input id="session-intention" className="intention-input" placeholder="What would you like to make space for?" maxLength={160} value={intention} onChange={e => setIntention(e.target.value)} />
+          <div className="daily-progress"><div className="daily-progress-copy"><span>{minutes >= goal ? 'A little promise, kept.' : 'Small steps, steady progress.'}</span><span>{minutes} / {goal} min today</span></div><div className="daily-track" role="progressbar" aria-label="Daily focus goal" aria-valuemin={0} aria-valuemax={goal} aria-valuenow={Math.min(minutes, goal)}><span style={{width:`${progress}%`}} /></div><small>{today.length} {today.length === 1 ? 'session' : 'sessions'} completed · at your own pace</small></div>
+        </section>
+      </div>
+    </Dialog>
+    <Dialog open={panel === 'tasks'} onClose={closePanel} label="Todo List"><TodoList onFocusTask={focusOnTask} /></Dialog>
+    <Dialog open={panel === 'notes'} onClose={closePanel} label="Scratchpad"><Scratchpad /></Dialog>
+    <Dialog open={panel === 'personalize'} onClose={closePanel} label="Personalize workspace">
+      <section className="personalize-panel glass-card"><div className="panel-heading"><span className="eyebrow">A SPACE THAT FEELS LIKE YOU</span><h2>{name.trim() ? `${name.trim()}’s quiet corner.` : 'Make yourself at home.'}</h2><p>Little details. Your kind of calm.</p></div>
+        <label className="field-label">What should we call you?<input maxLength={30} value={name} placeholder="Your name (optional)" onChange={e => setName(e.target.value)} /></label>
+        <label className="field-label">Daily focus goal<select value={goal} onChange={e => setGoal(Number(e.target.value))}>{[15,30,60,90,120,180,240,480].map(value => <option key={value} value={value}>{value} minutes</option>)}</select><small>Completed focus sessions count toward your goal.</small></label>
+        <fieldset className="theme-field"><legend>Your accent</legend><div className="theme-options">{['sage','rose','lavender'].map(value => <button key={value} className={`theme-option theme-${value}`} aria-pressed={theme === value} onClick={() => setTheme(value)}><span />{value}{theme === value && <span className="theme-check">✓</span>}</button>)}</div></fieldset>
+        <p className="panel-footnote">Your changes are saved automatically on this device.</p>
+      </section>
+    </Dialog>
+    <Dialog open={panel === 'about'} onClose={closePanel} label="About Mind Chill"><section className="about-content glass-card"><Leaf size={28} /><h2 className="about-title">A little room for you.</h2><p>Music, a cozy view, and one thing to focus on. Mind Chill is your quiet companion for work, study, and unwinding.</p><div className="shortcuts-grid">{[['Space','Play / pause'],['G','Next scene'],['M','Mute'],['P','Focus timer'],['T','Your tasks'],['F','Fullscreen']].map(([key,label]) => <div className="shortcut-item" key={key}><kbd>{key}</kbd><span>{label}</span></div>)}</div><p className="about-credit">Made with care by Sijan Pradhan · <a href="https://github.com/Sij4n/MindChill" target="_blank" rel="noreferrer">GitHub ↗</a></p></section></Dialog>
+    <VideoCall isOpen={panel === 'study'} onClose={closePanel} />
+    {isPromoMode && <PromoVideo onComplete={() => {window.location.href = '/';}} />}
+  </div>;
 }
-
 export default App;
